@@ -21,3 +21,16 @@ describe('Business WhatsApp configuration', () => {
     expect(link).toBe(`https://wa.me/${company.whatsappNumber}?text=${encodeURIComponent(message)}`);
   });
 });
+describe('Location map', () => {
+  it('builds the embed link for the confirmed address when the browser key exists', () => {
+    vi.stubEnv('VITE_LOVABLE_CONNECTOR_GOOGLE_MAPS_BROWSER_KEY', 'test-browser-key');
+    const url = mapEmbedUrl();
+    expect(url).toContain('google.com/maps/embed/v1/place');
+    expect(url).toContain(`place_id:${company.placeId}`);
+    expect(url).toContain('key=test-browser-key');
+  });
+  it('shows the honest placeholder instead of a broken map without the key', () => {
+    vi.stubEnv('VITE_LOVABLE_CONNECTOR_GOOGLE_MAPS_BROWSER_KEY', '');
+    expect(mapEmbedUrl()).toBeNull();
+  });
+});
