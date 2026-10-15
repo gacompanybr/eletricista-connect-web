@@ -1,8 +1,8 @@
-import { afterEach, describe, expect, it } from 'vitest';
-import { company, whatsappUrl } from '@/lib/company';
+import { afterEach, describe, expect, it, vi } from 'vitest';
+import { company, mapEmbedUrl, whatsappUrl } from '@/lib/company';
 
 const originalNumber = company.whatsappNumber;
-afterEach(() => { company.whatsappNumber = originalNumber; });
+afterEach(() => { company.whatsappNumber = originalNumber; vi.unstubAllEnvs(); });
 describe('Business WhatsApp configuration', () => {
   it('never creates a link without a confirmed number', () => {
     company.whatsappNumber = '';
