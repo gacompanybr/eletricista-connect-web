@@ -13,4 +13,4 @@
 - Centralize contact fields and validated WhatsApp URLs in `src/lib/company.ts`; unconfirmed values must never produce fictional links.
 - Use WhatsAppButton for every sales inquiry, offering the verified Instagram in an honest dialog until the official phone is configured.
 - Keep visual tokens and layout rules in the global stylesheet; illustrative category images do not establish stock availability.
-- Render the contact-section location map with the linked Google Maps connector's Maps Embed API using the confirmed place ID stored in `src/lib/company.ts`, and keep it click-to-activate so page scrolling stays under the visitor's control; never hand-draw a substitute map.
+- Render the location with the linked Google Maps connector's Maps Embed API and confirmed place ID; load only after activation on a safe origin, with visible loading/unavailable states and a direct Maps link so blocked embeds never leave an empty panel; never hand-draw a substitute map.

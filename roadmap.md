@@ -5,3 +5,4 @@
 - [x] Activate official WhatsApp and directions to Rua Guadalajara, 133, Centro, Trindade-PE.
 - [x] Refine imagery, readability, spacing and subtle once-only scroll animations; verify links and mobile/desktop layouts.
 - [x] Show the confirmed store location on a Google Maps card in the contact section.
+- [x] Prevent an empty location panel with explicit activation, visible address, unavailable state and direct Google Maps access.
