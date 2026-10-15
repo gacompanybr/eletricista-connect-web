@@ -1,38 +1,57 @@
-import { useState } from 'react';
-import { MapPin, Maximize2 } from 'lucide-react';
+import { useEffect, useState } from 'react';
+import { MapPin, Maximize2, ArrowUpRight, LoaderCircle } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 import { company, mapEmbedUrl } from '@/lib/company';
 
 export function LocationMap() {
   const [interactive, setInteractive] = useState(false);
+  const [status, setStatus] = useState<'idle' | 'loading' | 'ready' | 'unavailable'>('idle');
   const src = mapEmbedUrl();
 
+  useEffect(() => {
+    if (status !== 'loading') return;
+    const timer = window.setTimeout(() => setStatus('unavailable'), 12000);
+    return () => window.clearTimeout(timer);
+  }, [status]);
+
+  function activateMap() {
+    const hostname = window.location.hostname;
+    if (!src || hostname === 'localhost' || hostname === '127.0.0.1' || hostname.includes('-devserver-')) {
+      setStatus('unavailable');
+      return;
+    }
+    setInteractive(true);
+    setStatus('loading');
+  }
+
   return (
-    <div className="contact-map reveal">
+    <div className="contact-map">
       <div className="contact-map-frame">
-        {src ? (
-          <>
+        {src && interactive && status !== 'unavailable' && (
             <iframe
               title={`Mapa da localização da ${company.name} em Trindade, Pernambuco`}
               src={src}
-              loading="lazy"
+              width="600"
+              height="300"
               referrerPolicy="strict-origin-when-cross-origin"
-              tabIndex={interactive ? 0 : -1}
+              onLoad={() => setStatus('ready')}
+              onError={() => setStatus('unavailable')}
+              tabIndex={status === 'ready' ? 0 : -1}
               allowFullScreen
             />
-            {!interactive && (
-              <button type="button" className="map-activate" onClick={() => setInteractive(true)} aria-label="Ativar mapa interativo da localização">
-                <span><Maximize2 />Explorar mapa</span>
-              </button>
-            )}
-          </>
-        ) : (
-          <div className="map-placeholder">
+        )}
+        {status !== 'ready' && (
+          <div className="map-placeholder" aria-live="polite">
             <MapPin />
-            <span>{company.address}<br />Trindade, Pernambuco</span>
+            <strong>{company.address}</strong>
+            <span>Trindade, Pernambuco</span>
+            {status === 'idle' && <Button variant="outline" onClick={activateMap} aria-label="Ativar mapa interativo da localização"><Maximize2 />Explorar mapa</Button>}
+            {status === 'loading' && <span className="map-loading"><LoaderCircle />Carregando mapa…</span>}
+            {status === 'unavailable' && <><span>O mapa não está disponível nesta visualização.</span><Button variant="outline" asChild><a href={company.mapsUrl} target="_blank" rel="noopener noreferrer">Abrir no Google Maps<ArrowUpRight /></a></Button></>}
           </div>
         )}
       </div>
-      <div className="contact-map-bar"><MapPin /><span>{company.address} · Trindade — PE</span></div>
+      <a className="contact-map-bar" href={company.mapsUrl} target="_blank" rel="noopener noreferrer"><MapPin /><span>{company.address} · Trindade — PE</span><ArrowUpRight /></a>
     </div>
   );
 }
